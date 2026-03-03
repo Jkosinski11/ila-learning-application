@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ila
+      POSTGRES_PASSWORD: ila1234!
+      POSTGRES_DB: ila_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  server:
+    build: ./my-react-app/server
+    environment:
+      PORT: 3001
+      # IMPORTANT: host is the service name "db", not localhost
+      DATABASE_URL: postgresql://ila:ila1234!@db:5432/ila_db
+      MIGRATIONS_DIR: /backend
+      MIGRATION: db_init.sql
+    volumes:
+      - ./backend:/backend:ro
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+
+  client:
+    build: ./my-react-app
+    environment:
+      # CRA file watching in Docker on Linux/WSL can be flaky without this
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+volumes:
+  pgdata:
