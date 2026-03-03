@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { AuthProvider } from "./AuthContext";
+import Auth from "./Auth";
+import Register from "./Register";
+import "./App.css";
 
 function App() {
+  const [view, setView] = useState("landing");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider>
+      <div className="card">
+        {view === "landing" && (
+          <>
+            <h1 className="app-title">Investing Literacy App</h1>
+            <p className="app-subtitle">Learn how to build toward your financial future</p>
+            <div className="divider" />
+            <button className="btn-primary" onClick={() => setView("login")}>Login</button>
+            <button className="btn-secondary" onClick={() => setView("register")}>Register</button>
+          </>
+        )}
+        {view === "login" && <Auth onBack={() => setView("landing")} />}
+        {view === "register" && <Register onBack={() => setView("landing")} />}
+      </div>
+    </AuthProvider>
   );
 }
 

@@ -1,38 +1,208 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0f4c4c 0%, #1a7a7a 50%, #20a090 100%);
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card Container */
+.card {
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  gap: 1.2rem;
+}
+
+/* Logo / App Name  */
+.app-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f4c4c;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.app-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-align: center;
+  margin-top: -0.6rem;
+}
+
+/*  Section Heading  */
+h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #0f4c4c;
+  text-align: center;
+}
+
+/* Inputs  */
+input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  color: #111827;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+input:focus {
+  border-color: #1a7a7a;
+  box-shadow: 0 0 0 3px rgba(26, 122, 122, 0.15);
+}
+
+input::placeholder {
+  color: #9ca3af;
+}
+
+/*  Buttons  */
+button {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Primary button */
+.btn-primary {
+  background: #1a7a7a;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.btn-primary:hover {
+  background: #155f5f;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Secondary / outline button */
+.btn-secondary {
+  background: transparent;
+  color: #1a7a7a;
+  border: 1.5px solid #1a7a7a;
+}
+
+.btn-secondary:hover {
+  background: #f0fafa;
+}
+
+/* Danger button (logout) */
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+/*  Account Type Selector  */
+.account-type-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.btn-account-type {
+  background: #f9fafb;
+  color: #0f4c4c;
+  border: 1.5px solid #d1d5db;
+  font-weight: 500;
+}
+
+.btn-account-type:hover {
+  background: #f0fafa;
+  border-color: #1a7a7a;
+  color: #1a7a7a;
+}
+
+/*  Account type badge  */
+.account-badge {
+  background: #e6f7f7;
+  color: #0f4c4c;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+/*  Message / Feedback  */
+.message {
+  font-size: 0.88rem;
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.message.success {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.message.error {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+/*  Divider  */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+/* Welcome screen  */
+.welcome-email {
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+/*  Mobile */
+@media (max-width: 480px) {
+  body {
+    align-items: flex-start;
+    padding: 1rem;
   }
-  to {
-    transform: rotate(360deg);
+
+  .card {
+    padding: 2rem 1.25rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+  }
+
+  .app-title {
+    font-size: 1.5rem;
   }
 }
