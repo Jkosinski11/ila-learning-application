@@ -63,6 +63,26 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Hardcoded secret registration codes
+const REGISTRATION_CODES = {
+  teacher: "TEACH2026",
+  admin: "ADMIN2026",
+};
+
+app.post("/verify-code", (req, res) => {
+  const { accountType, secretCode } = req.body;
+
+  if (!REGISTRATION_CODES[accountType]) {
+    return res.status(400).json({ valid: false, error: "Invalid account type" });
+  }
+
+  if (secretCode === REGISTRATION_CODES[accountType]) {
+    return res.json({ valid: true });
+  } else {
+    return res.json({ valid: false });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

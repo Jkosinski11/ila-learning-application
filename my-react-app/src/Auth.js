@@ -1,12 +1,9 @@
 import { useState } from "react";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase";
 import { useAuth } from "./AuthContext";
 
-function Auth() {
+function Auth({ onBack }) {
   const { user, logout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,16 +24,6 @@ function Auth() {
     }
   }
 
-  async function register() {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      setMessage("Account created! You can now log in.");
-    } catch (err) {
-      setMessage("Error: " + err.message);
-    }
-  }
-
-  // If user is already logged in, show dashboard instead of login form
   if (user) {
     return (
       <div>
@@ -49,7 +36,7 @@ function Auth() {
 
   return (
     <div>
-      <h2>Login / Register</h2>
+      <h2>Login</h2>
       <input
         placeholder="Email"
         value={email}
@@ -62,7 +49,7 @@ function Auth() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={login}>Login</button>
-      <button onClick={register}>Register</button>
+      <button onClick={onBack}>Back</button>
       <p>{message}</p>
     </div>
   );

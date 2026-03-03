@@ -1,0 +1,132 @@
+import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "./firebase";
+import { doc, setDoc } from "firebase/firestore";
+
+// Hardcoded valid class codes
+const VALID_CLASS_CODES = ["UHS001", "UHS002", "UHS003"];
+
+// Secret codes live in backend, but we verify via backend call
+// These are just placeholders so the form knows what fields to show
+
+function Register({ onBack }) {
+  const [accountType, setAccountType] = useState(""); // "student" | "teacher" | "admin"
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [classCode, setClassCode] = useState("");
+  const [secretCode, setSecretCode] = useState("");
+  const [message, setMessage] = useState("");
+
+  async function register() {
+    setMessage("");
+
+    // Validate shared fields 
+    if (!email || !password || !firstName || !lastName) {
+      setMessage("Please fill out all fields.");
+      return;
+    }
+
+    // Student validation 
+    if (accountType === "student") {
+      if (!VALID_CLASS_CODES.includes(classCode.toUpperCase())) {
+        setMessage("Invalid class code. Please check with your teacher.");
+        return;
+      }
+    }
+
+    // Teacher / Admin secret code validation
+    if (accountType === "teacher" || accountType === "admin") {
+      try {
+        const response = await fetch("http://localhost:5000/verify-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accountType, secretCode }),
+        });
+        const data = await response.json();
+        if (!data.valid) {
+          setMessage("Invalid registration code.");
+          return;
+        }
+      } catch (err) {
+        setMessage("Could not verify code. Is the backend running?");
+        return;
+      }
+    }
+
+    // Create Firebase Auth account
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = userCred.user.uid;
+
+      // Save profile to Firestore
+      await setDoc(doc(db, "users", uid), {
+        firstName,
+        lastName,
+        email,
+        accountType,
+        classCode: accountType === "student" ? classCode.toUpperCase() : 
+                   accountType === "teacher" ? classCode.toUpperCase() : "",
+        createdAt: new Date(),
+      });
+
+      setMessage("Account created successfully!");
+    } catch (err) {
+      setMessage("Error: " + err.message);
+    }
+  }
+
+  return (
+    <div>
+      <h2>Register</h2>
+
+      {/* Account type selector */}
+      {!accountType && (
+        <div>
+          <p>Select your account type:</p>
+          <button onClick={() => setAccountType("student")}>Student</button>
+          <button onClick={() => setAccountType("teacher")}>Teacher</button>
+          <button onClick={() => setAccountType("admin")}>Administrator</button>
+        </div>
+      )}
+
+      {/* Shared fields */}
+      {accountType && (
+        <div>
+          <p>Registering as: <strong>{accountType}</strong></p>
+          <input placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          <input placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+
+          {/* Student only */}
+          {accountType === "student" && (
+            <input placeholder="Class Code (e.g. UHS001)" value={classCode} onChange={(e) => setClassCode(e.target.value)} />
+          )}
+
+          {/* Teacher only */}
+          {accountType === "teacher" && (
+            <>
+              <input placeholder="Your Class Code (e.g. UHS001)" value={classCode} onChange={(e) => setClassCode(e.target.value)} />
+              <input placeholder="Teacher Registration Code" value={secretCode} onChange={(e) => setSecretCode(e.target.value)} />
+            </>
+          )}
+
+          {/* Admin only */}
+          {accountType === "admin" && (
+            <input placeholder="Administrator Registration Code" value={secretCode} onChange={(e) => setSecretCode(e.target.value)} />
+          )}
+
+          <button onClick={register}>Create Account</button>
+          <button onClick={() => setAccountType("")}>Back to account type</button>
+        </div>
+      )}
+
+      <button onClick={onBack}>Back to Home</button>
+      <p>{message}</p>
+    </div>
+  );
+}
+
+export default Register;
