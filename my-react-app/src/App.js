@@ -1,7 +1,12 @@
+import { AuthProvider } from "./AuthContext";
 import Auth from "./Auth";
 
 function App() {
-  return <Auth />;
+  return (
+    <AuthProvider>
+      <Auth />
+    </AuthProvider>
+  );
 }
 
 export default App;

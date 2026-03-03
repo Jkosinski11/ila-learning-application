@@ -4,8 +4,10 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "./firebase";
+import { useAuth } from "./AuthContext";
 
 function Auth() {
+  const { user, logout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -14,47 +16,53 @@ function Auth() {
     try {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       const token = await userCred.user.getIdToken();
-      setMessage("Logged in!");
 
-      await fetch("http://localhost:5000/protected", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await fetch("http://localhost:5000/protected", {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      const data = await response.json();
+      setMessage("Logged in! Backend says: " + data.message);
     } catch (err) {
-      setMessage(err.message);
+      setMessage("Error: " + err.message);
     }
   }
 
   async function register() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      setMessage("Account created!");
+      setMessage("Account created! You can now log in.");
     } catch (err) {
-      setMessage(err.message);
+      setMessage("Error: " + err.message);
     }
+  }
+
+  // If user is already logged in, show dashboard instead of login form
+  if (user) {
+    return (
+      <div>
+        <h2>Welcome!</h2>
+        <p>Logged in as: {user.email}</p>
+        <button onClick={logout}>Logout</button>
+      </div>
+    );
   }
 
   return (
     <div>
       <h2>Login / Register</h2>
-
       <input
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-
       <input
         placeholder="Password"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-
       <button onClick={login}>Login</button>
       <button onClick={register}>Register</button>
-
       <p>{message}</p>
     </div>
   );
