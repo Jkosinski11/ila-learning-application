@@ -18,12 +18,14 @@ function Register({ onBack }) {
   const [classCode, setClassCode] = useState("");
   const [secretCode, setSecretCode] = useState("");
   const [message, setMessage] = useState("");
+   const [isError, setIsError] = useState(false)
 
   async function register() {
     setMessage("");
 
     // Validate shared fields 
     if (!email || !password || !firstName || !lastName) {
+      setIsError(true);
       setMessage("Please fill out all fields.");
       return;
     }
@@ -31,6 +33,7 @@ function Register({ onBack }) {
     // Student validation 
     if (accountType === "student") {
       if (!VALID_CLASS_CODES.includes(classCode.toUpperCase())) {
+        setIsError(true);
         setMessage("Invalid class code. Please check with your teacher.");
         return;
       }
@@ -46,10 +49,12 @@ function Register({ onBack }) {
         });
         const data = await response.json();
         if (!data.valid) {
+            setIsError(true);
           setMessage("Invalid registration code.");
           return;
         }
       } catch (err) {
+        setIsError(true);
         setMessage("Could not verify code. Is the backend running?");
         return;
       }
@@ -71,30 +76,37 @@ function Register({ onBack }) {
         createdAt: new Date(),
       });
 
+        setIsError(false);
       setMessage("Account created successfully!");
     } catch (err) {
+      setIsError(true);
       setMessage("Error: " + err.message);
     }
   }
 
-  return (
-    <div>
+return (
+    
+    <>
       <h2>Register</h2>
 
       {/* Account type selector */}
       {!accountType && (
-        <div>
-          <p>Select your account type:</p>
-          <button onClick={() => setAccountType("student")}>Student</button>
-          <button onClick={() => setAccountType("teacher")}>Teacher</button>
-          <button onClick={() => setAccountType("admin")}>Administrator</button>
-        </div>
+        
+        <>
+          <p className="app-subtitle">Select your account type</p> 
+          <div className="account-type-grid"> 
+            <button className="btn-account-type" onClick={() => setAccountType("student")}>Student</button> 
+            <button className="btn-account-type" onClick={() => setAccountType("teacher")}>Teacher</button> 
+            <button className="btn-account-type" onClick={() => setAccountType("admin")}>Administrator</button> 
+          </div>
+        </>
       )}
 
       {/* Shared fields */}
       {accountType && (
-        <div>
-          <p>Registering as: <strong>{accountType}</strong></p>
+        
+        <>
+          <span className="account-badge">{accountType}</span> 
           <input placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
           <input placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
           <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -118,15 +130,17 @@ function Register({ onBack }) {
             <input placeholder="Administrator Registration Code" value={secretCode} onChange={(e) => setSecretCode(e.target.value)} />
           )}
 
-          <button onClick={register}>Create Account</button>
-          <button onClick={() => setAccountType("")}>Back to account type</button>
-        </div>
+          <button className="btn-primary" onClick={register}>Create Account</button> 
+          <button className="btn-secondary" onClick={() => setAccountType("")}>Back to account type</button> 
+        </>
       )}
 
-      <button onClick={onBack}>Back to Home</button>
-      <p>{message}</p>
-    </div>
+      <div className="divider" /> 
+      <button className="btn-secondary" onClick={onBack}>Back to Home</button> 
+      <p className={`message ${isError ? "error" : "success"}`}>{message}</p> 
+    </> 
   );
 }
+
 
 export default Register;

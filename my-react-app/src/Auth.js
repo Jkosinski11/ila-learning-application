@@ -8,50 +8,43 @@ function Auth({ onBack }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
   async function login() {
     try {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       const token = await userCred.user.getIdToken();
-
-      const response = await fetch("http://localhost:5000/protected", {
+      await fetch("http://localhost:5000/protected", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await response.json();
-      setMessage("Logged in! Backend says: " + data.message);
+      setIsError(false);
+      setMessage("Logged in successfully!");
     } catch (err) {
+      setIsError(true);
       setMessage("Error: " + err.message);
     }
   }
 
   if (user) {
     return (
-      <div>
-        <h2>Welcome!</h2>
-        <p>Logged in as: {user.email}</p>
-        <button onClick={logout}>Logout</button>
-      </div>
+      <>
+        <h2>Welcome back!</h2>
+        <p className="welcome-email">{user.email}</p>
+        <div className="divider" />
+        <button className="btn-danger" onClick={logout}>Logout</button>
+      </>
     );
   }
 
   return (
-    <div>
+    <>
       <h2>Login</h2>
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={login}>Login</button>
-      <button onClick={onBack}>Back</button>
-      <p>{message}</p>
-    </div>
+      <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <button className="btn-primary" onClick={login}>Login</button>
+      <button className="btn-secondary" onClick={onBack}>Back</button>
+      {message && <p className={`message ${isError ? "error" : "success"}`}>{message}</p>}
+    </>
   );
 }
 
