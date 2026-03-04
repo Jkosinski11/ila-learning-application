@@ -1,5 +1,5 @@
 import "./App.css";
-import TeacherInvitePanel from "./components/teacherInvitePanel";
+import TeacherInvitePanel from "./components/TeacherInvitePanel";
 import JoinClassPanel from "./components/JoinClassPanel";
 
 function App() {
