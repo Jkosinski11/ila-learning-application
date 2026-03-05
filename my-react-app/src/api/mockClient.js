@@ -103,4 +103,20 @@ export const mockClient = {
     if (!wallet) throw new Error("Wallet not found");
     return wallet;
   },
+  async ensureWallet({ classId }) {
+  const state = load();
+  const uid = getOrCreateLocalUid();
+  const key = `${classId}:${uid}`;
+
+  if (!state.wallets[key]) {
+    state.wallets[key] = {
+      classId,
+      uid,
+      cashCents: STARTING_CASH_CENTS,
+    };
+    save(state);
+  }
+
+  return state.wallets[key];
+},
 };
