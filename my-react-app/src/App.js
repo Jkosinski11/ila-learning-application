@@ -1,16 +1,45 @@
-import "./App.css";
+import { useState } from "react";
+import { AuthProvider } from "./AuthContext";
+import Auth from "./Auth";
+import Register from "./Register";
 import TeacherInvitePanel from "./components/TeacherInvitePanel";
 import JoinClassPanel from "./components/JoinClassPanel";
+import "./App.css";
 
 function App() {
+  const [view, setView] = useState("landing");
+
   return (
-    <div style={{ padding: 32, fontFamily: "Arial, sans-serif" }}>
-      <h1>iLa (Mock Mode)</h1>
+    <AuthProvider>
+      <div className="card">
+        {view === "landing" && (
+          <>
+            <h1 className="app-title">iLa</h1>
+            <p className="app-subtitle">
+              Learn how to build toward your financial future
+            </p>
 
-      <TeacherInvitePanel />
+            <div className="divider" />
 
-      <JoinClassPanel />
-    </div>
+            <button className="btn-primary" onClick={() => setView("login")}>
+              Login
+            </button>
+
+            <button className="btn-secondary" onClick={() => setView("register")}>
+              Register
+            </button>
+
+            <div style={{ marginTop: 30 }}>
+              <TeacherInvitePanel />
+              <JoinClassPanel />
+            </div>
+          </>
+        )}
+
+        {view === "login" && <Auth onBack={() => setView("landing")} />}
+        {view === "register" && <Register onBack={() => setView("landing")} />}
+      </div>
+    </AuthProvider>
   );
 }
 
