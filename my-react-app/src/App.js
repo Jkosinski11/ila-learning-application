@@ -1,29 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
-import { useEffect, useState } from "react"
+import { useState } from "react";
+import { AuthProvider } from "./AuthContext";
+import Auth from "./Auth";
+import Register from "./Register";
+import "./App.css";
 
 function App() {
-   const [health, setHealth] = useState(null);
-   const [err, setErr] = useState(null);
-   useEffect(() => {
-    fetch("/api/health") // uses CRA proxy if you added it
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then(setHealth)
-      .catch((e) => setErr(String(e)));
-  }, []);
+  const [view, setView] = useState("landing");
+
   return (
-     <div style={{ padding: 20 }}>
-      <h1>Mock Trading App</h1>
-      {err && <p style={{ color: "red" }}>Error: {err}</p>}
-      {health ? (
-        <pre>{JSON.stringify(health, null, 2)}</pre>
-      ) : (
-        <p>Loading health check…</p>
-      )}
-    </div>
+    <AuthProvider>
+      <div className="card">
+        {view === "landing" && (
+          <>
+            <h1 className="app-title">Investing Literacy App</h1>
+            <p className="app-subtitle">Learn how to build toward your financial future</p>
+            <div className="divider" />
+            <button className="btn-primary" onClick={() => setView("login")}>Login</button>
+            <button className="btn-secondary" onClick={() => setView("register")}>Register</button>
+          </>
+        )}
+        {view === "login" && <Auth onBack={() => setView("landing")} />}
+        {view === "register" && <Register onBack={() => setView("landing")} />}
+      </div>
+    </AuthProvider>
   );
 }
 
