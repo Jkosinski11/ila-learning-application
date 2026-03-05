@@ -12,14 +12,14 @@ services:
 
   server:
     build: ./my-react-app/server
+    volumes:
+      - ./my-react-app/backend:/backend:ro
     environment:
       PORT: 3001
       # IMPORTANT: host is the service name "db", not localhost
       DATABASE_URL: postgresql://ila:ila1234!@db:5432/ila_db
       MIGRATIONS_DIR: /backend
       MIGRATION: db_init.sql
-    volumes:
-      - ./backend:/backend:ro
     ports:
       - "3001:3001"
     depends_on:
