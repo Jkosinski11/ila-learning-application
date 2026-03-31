@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./AuthContext";
 import Auth from "./Auth";
 import Register from "./Register";
 import Dashboard from "./Dashboard";
+import Landing from "./pages/landing";
 import "./App.css";
 
 function AppShell() {
