@@ -2,11 +2,14 @@ BEGIN;
 
 
 -- using the UID created by firbase at login
-CREATE TABLE IF NOT EXISTS  users (
+CREATE TABLE IF NOT EXISTS users ( -- 
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   firebase_uid TEXT UNIQUE NOT NULL,
   email TEXT UNIQUE,
   account_type TEXT,
+  class_code TEXT,
+  first_name TEXT,
+  last_name TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
