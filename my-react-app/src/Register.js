@@ -42,7 +42,7 @@ function Register({ onBack }) {
     // Teacher / Admin secret code validation
     if (accountType === "teacher" || accountType === "admin") {
       try {
-        const response = await fetch("http://localhost:5000/verify-code", {
+        const response = await fetch("http://localhost:3001/verify-code", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ accountType, secretCode }),
@@ -64,8 +64,27 @@ function Register({ onBack }) {
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCred.user.uid;
-
+      const token = await userCred.user.getIdToken();
       // Save profile to Firestore
+
+      await fetch("http://localhost:3001/api/users/sync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          accountType,
+          classCode:
+            accountType === "student" || accountType === "teacher"
+              ? classCode.toUpperCase()
+              : "",
+        }),
+      });
+
+
       await setDoc(doc(db, "users", uid), {
         firstName,
         lastName,

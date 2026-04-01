@@ -14,7 +14,7 @@ function Auth({ onBack }) {
     try {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       const token = await userCred.user.getIdToken();
-      await fetch("http://localhost:5000/protected", {
+      await fetch("http://localhost:3001/protected", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setIsError(false);
