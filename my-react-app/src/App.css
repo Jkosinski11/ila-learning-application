@@ -38,6 +38,11 @@ body {
   overflow-y: auto;
 }
 
+.landing-shell {
+  width: 100%;
+  min-height: 100vh;
+}
+
 .auth-card {
   width: 100%;
   max-width: 420px;
@@ -317,6 +322,53 @@ button:active {
   min-width: 128px;
 }
 
+.buy-panel {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: minmax(130px, 180px) 1fr auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.buy-quantity-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: var(--ila-mist);
+  font-size: 0.85rem;
+}
+
+.buy-quantity-field input {
+  width: 100%;
+}
+
+.buy-summary {
+  min-height: 52px;
+  border: 1px solid #d8e5e9;
+  border-radius: 12px;
+  background: #f8fbfc;
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.15rem;
+}
+
+.buy-summary span {
+  color: #667580;
+  font-size: 0.78rem;
+}
+
+.buy-summary b {
+  color: var(--ila-ink);
+  font-size: 1rem;
+}
+
+.buy-stock-btn {
+  width: auto;
+  min-width: 150px;
+}
+
 .stock-results-grid {
   margin-top: 0.85rem;
   display: grid;
@@ -522,6 +574,16 @@ button:active {
   min-height: 230px;
 }
 
+.wallet-card-button {
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+}
+
+.wallet-card-button.active {
+  box-shadow: 0 0 0 3px rgba(218, 248, 243, 0.18);
+}
+
 .wallet-hero .metric-label,
 .wallet-hero .muted-copy,
 .wallet-hero h2,
@@ -534,6 +596,234 @@ button:active {
   font-weight: 700;
   margin: 0.35rem 0;
   color: white;
+}
+
+.wallet-card-hint {
+  margin-top: 0.7rem;
+  font-size: 0.88rem;
+  opacity: 0.95;
+}
+
+.holdings-panel {
+  width: 100%;
+}
+
+.holdings-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.transaction-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.holding-row {
+  border: 1px solid #e3edf1;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
+}
+
+.transaction-row {
+  border: 1px solid #e3edf1;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
+}
+
+.holding-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.transaction-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.holding-symbol {
+  color: var(--ila-ink);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.holding-shares {
+  border-radius: 999px;
+  background: #ecf8f7;
+  color: var(--ila-ink-soft);
+  border: 1px solid #d4ebe7;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.holding-stats {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.holding-stats div {
+  border: 1px solid #e8eef4;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.75rem 0.85rem;
+}
+
+.holding-stats span {
+  display: block;
+  color: #667580;
+  font-size: 0.76rem;
+  margin-bottom: 0.15rem;
+}
+
+.holding-stats b {
+  color: var(--ila-ink);
+  font-size: 1rem;
+}
+
+.transaction-stats {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.transaction-stats div {
+  border: 1px solid #e8eef4;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.75rem 0.85rem;
+}
+
+.transaction-stats span {
+  display: block;
+  color: #667580;
+  font-size: 0.76rem;
+  margin-bottom: 0.15rem;
+}
+
+.transaction-stats b {
+  color: var(--ila-ink);
+  font-size: 1rem;
+}
+
+.holding-actions {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: minmax(120px, 170px) auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.holding-quantity-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #667580;
+  font-size: 0.78rem;
+}
+
+.holding-quantity-field input {
+  width: 100%;
+}
+
+.holding-action-btn {
+  width: auto;
+  min-width: 140px;
+}
+
+.transaction-badge {
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.transaction-badge.buy {
+  background: #ecf8f7;
+  color: #116a5f;
+  border-color: #d0ebe7;
+}
+
+.transaction-badge.sell {
+  background: #fff1f1;
+  color: #b03a3a;
+  border-color: #f1d2d2;
+}
+
+.trade-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 27, 27, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.trade-modal {
+  width: min(100%, 460px);
+  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid #dbe8eb;
+  box-shadow: 0 24px 80px rgba(8, 27, 27, 0.25);
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.trade-modal-eyebrow {
+  color: var(--ila-ink-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trade-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.trade-modal-item {
+  border: 1px solid #e7eef1;
+  border-radius: 14px;
+  background: #f8fbfc;
+  padding: 0.8rem;
+}
+
+.trade-modal-item span {
+  display: block;
+  color: #667580;
+  font-size: 0.76rem;
+  margin-bottom: 0.15rem;
+}
+
+.trade-modal-item b {
+  color: var(--ila-ink);
+  font-size: 1rem;
+}
+
+.trade-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.trade-modal-actions button {
+  width: auto;
+  min-width: 132px;
 }
 
 .info-stack {
@@ -583,7 +873,8 @@ button:active {
 @media (max-width: 900px) {
   .dashboard-content.two-col,
   .metrics-grid,
-  .quote-grid {
+  .quote-grid,
+  .transaction-stats {
     grid-template-columns: 1fr;
   }
 
@@ -606,6 +897,14 @@ button:active {
     width: 100%;
   }
 
+  .buy-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .buy-stock-btn {
+    width: 100%;
+  }
+
   .quote-header {
     flex-direction: column;
     align-items: flex-start;
@@ -613,6 +912,18 @@ button:active {
 
   .quote-price-wrap {
     text-align: left;
+  }
+
+  .trade-modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trade-modal-actions {
+    flex-direction: column;
+  }
+
+  .trade-modal-actions button {
+    width: 100%;
   }
 }
 
@@ -654,5 +965,21 @@ button:active {
 
   .roster-table-wrap {
     overflow-x: auto;
+  }
+
+  .holding-main,
+  .transaction-main,
+  .holding-stats {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .holding-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .holding-action-btn {
+    width: 100%;
   }
 }

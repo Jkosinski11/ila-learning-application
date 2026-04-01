@@ -6,7 +6,7 @@ const admin = require("./firebaseAdmin");
 
 const app = express();
 const PORT = 5000;
-const API_VERSION = "stocks-v2";
+const API_VERSION = "stocks-v3";
 const firebaseReady = Array.isArray(admin.apps) && admin.apps.length > 0;
 
 const FMP_API_KEY = process.env.FMP_API_KEY;
@@ -113,6 +113,22 @@ async function fetchJsonOrThrow(url) {
   }
 
   return json;
+}
+
+function normalizeQuoteItem(item, symbol) {
+  return {
+    symbol: item.symbol || symbol,
+    name: item.name || null,
+    price: item.price,
+    change: item.change ?? null,
+    changePercent: item.changePercent ?? item.changesPercentage ?? null,
+    dayLow: item.dayLow ?? null,
+    dayHigh: item.dayHigh ?? null,
+    previousClose: item.previousClose ?? null,
+    volume: item.volume ?? null,
+    exchange: item.exchange ?? null,
+    timestamp: item.timestamp ?? null,
+  };
 }
 
 app.get("/", (req, res) => {
@@ -222,27 +238,27 @@ app.get("/stocks/quote", async (req, res) => {
   }
 
   try {
-    const url = `${FMP_BASE_URL}/quote?symbol=${encodeURIComponent(symbol)}&apikey=${encodeURIComponent(FMP_API_KEY)}`;
-    const payload = await fetchJsonOrThrow(url);
+    let payload;
+
+    try {
+      const batchUrl = `${FMP_BASE_URL}/batch-quote-short?symbols=${encodeURIComponent(symbol)}&apikey=${encodeURIComponent(FMP_API_KEY)}`;
+      payload = await fetchJsonOrThrow(batchUrl);
+    } catch (batchError) {
+      if (batchError.status !== 402) {
+        throw batchError;
+      }
+
+      const shortUrl = `${FMP_BASE_URL}/quote-short?symbol=${encodeURIComponent(symbol)}&apikey=${encodeURIComponent(FMP_API_KEY)}`;
+      payload = await fetchJsonOrThrow(shortUrl);
+    }
+
     const item = Array.isArray(payload) ? payload[0] : null;
 
     if (!item) {
       return res.status(404).json({ error: "Quote not found for symbol." });
     }
 
-    const quote = {
-      symbol: item.symbol,
-      name: item.name,
-      price: item.price,
-      change: item.change,
-      changePercent: item.changePercent ?? item.changesPercentage,
-      dayLow: item.dayLow,
-      dayHigh: item.dayHigh,
-      previousClose: item.previousClose,
-      volume: item.volume,
-      exchange: item.exchange,
-      timestamp: item.timestamp,
-    };
+    const quote = normalizeQuoteItem(item, symbol);
 
     setCached(quoteCache, symbol, quote, QUOTE_TTL_MS);
     return res.json({ quote, cached: false, version: API_VERSION });

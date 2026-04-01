@@ -7,21 +7,23 @@ import Landing from "./pages/landing";
 import "./App.css";
 
 function AppShell() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, logout } = useAuth();
   const [view, setView] = useState("landing"); // landing | login | register | dashboard
+  const [pendingLoginRedirect, setPendingLoginRedirect] = useState(false);
 
   useEffect(() => {
     if (loading) return;
 
-    if (user && profile) {
+    if (pendingLoginRedirect && user && profile?.accountType) {
       setView("dashboard");
+      setPendingLoginRedirect(false);
       return;
     }
 
-    if (!user) {
+    if (!user && view === "dashboard") {
       setView("landing");
     }
-  }, [user, profile, loading]);
+  }, [user, profile, loading, view, pendingLoginRedirect]);
 
   if (loading) {
     return (
@@ -32,25 +34,45 @@ function AppShell() {
     );
   }
 
-  const shellClassName = view === "dashboard" ? "card dashboard-shell" : "card auth-card";
+  const shellClassName =
+    view === "landing"
+      ? "landing-shell"
+      : view === "dashboard"
+        ? "card dashboard-shell"
+        : "card auth-card";
+
+  function handleAuthenticated(nextProfile) {
+    if (nextProfile?.accountType) {
+      setPendingLoginRedirect(false);
+      setView("dashboard");
+    }
+  }
+
+  async function handleLoginClick() {
+    setPendingLoginRedirect(true);
+
+    if (user) {
+      await logout();
+    }
+
+    setView("login");
+  }
 
   return (
     <div className={shellClassName}>
       {view === "landing" && (
-        <>
-          <h1 className="app-title">iLa</h1>
-          <p className="app-subtitle">Learn how to build toward your financial future</p>
-          <div className="divider" />
-          <button className="btn-primary" onClick={() => setView("login")}>
-            Login
-          </button>
-          <button className="btn-secondary" onClick={() => setView("register")}>
-            Register
-          </button>
-        </>
+        <Landing
+          onLoginClick={handleLoginClick}
+          onRegisterClick={() => setView("register")}
+        />
       )}
 
-      {view === "login" && <Auth onBack={() => setView("landing")} />}
+      {view === "login" && (
+        <Auth
+          onBack={() => setView("landing")}
+          onAuthenticated={handleAuthenticated}
+        />
+      )}
       {view === "register" && <Register onBack={() => setView("landing")} />}
       {view === "dashboard" && <Dashboard />}
     </div>

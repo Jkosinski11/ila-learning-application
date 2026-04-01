@@ -45,22 +45,25 @@ export function AuthProvider({ children }) {
   async function refreshProfile() {
     if (!auth.currentUser) {
       setProfile(null);
-      return;
+      return null;
     }
 
     try {
       const profileRef = doc(db, "users", auth.currentUser.uid);
       const snap = await getDoc(profileRef);
-      setProfile(snap.exists() ? snap.data() : null);
+      const nextProfile = snap.exists() ? snap.data() : null;
+      setProfile(nextProfile);
+      return nextProfile;
     } catch (error) {
       console.error("Failed to refresh profile:", error);
       setProfile(null);
+      return null;
     }
   }
 
   return (
     <AuthContext.Provider value={{ user, profile, logout, loading, refreshProfile }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

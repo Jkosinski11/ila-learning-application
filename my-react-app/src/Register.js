@@ -126,6 +126,8 @@ function Register({ onBack }) {
             ? normalizedClassCode
             : "",
         walletCents: accountType === "student" ? STARTING_CASH_CENTS : 0,
+        holdings: accountType === "student" ? [] : [],
+        tradeHistory: accountType === "student" ? [] : [],
         createdAt: new Date(),
       });
 
