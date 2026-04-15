@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const admin = require("./firebaseAdmin");
 const { Pool } = require("pg");
 const fs = require("fs");
 const path = require("path");
@@ -21,7 +22,21 @@ const searchCache = new Map();
 app.use(cors());
 app.use(express.json());
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+/*
+  Token verification middleware
+*/
+async function verifyToken(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const idToken = authHeader.split("Bearer ")[1];
 
 function ensureFmpKey(res) {
   if (!FMP_API_KEY) {
@@ -169,6 +184,26 @@ app.get("/stocks/debug", async (req, res) => {
       error: error.message,
     });
   }
+}
+
+/*
+  Public route
+*/
+app.get("/", (req, res) => {
+  res.send("Backend running");
+});
+
+/*
+  Protected route
+*/
+app.get("/protected", verifyToken, (req, res) => {
+  res.json({
+    message: "You are authenticated",
+    user: {
+      uid: req.user.uid,
+      email: req.user.email,
+    },
+  });
 });
 
 app.get("/protected", verifyToken, (req, res) => {
@@ -326,8 +361,9 @@ async function runMigrations() {
 
   console.log("Running migration:", fullPath);
 
-  const sql = fs.readFileSync(fullPath, "utf8");
-  await pool.query(sql);
+  if (!REGISTRATION_CODES[accountType]) {
+    return res.status(400).json({ valid: false, error: "Invalid account type" });
+  }
 
   console.log("Migration applied");
 }

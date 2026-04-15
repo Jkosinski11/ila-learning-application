@@ -94,7 +94,7 @@ function Register({ onBack }) {
 
     if (accountType === "teacher" || accountType === "admin") {
       try {
-        const response = await fetch("http://localhost:5000/verify-code", {
+        const response = await fetch("http://localhost:3001/verify-code", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ accountType, secretCode }),
