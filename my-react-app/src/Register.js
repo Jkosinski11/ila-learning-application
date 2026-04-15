@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  collection,
+  doc,
+  getDocs,
+  limit,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { auth, db } from "./firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { STARTING_CASH_CENTS } from "./models/contracts";
 
-// Hardcoded valid class codes
-const VALID_CLASS_CODES = ["UHS001", "UHS002", "UHS003"];
-
-// Secret codes live in backend, but we verify via backend call
-// These are just placeholders so the form knows what fields to show
+function makeClassCode() {
+  return `CLS${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+}
 
 function Register({ onBack }) {
   const [accountType, setAccountType] = useState(""); // "student" | "teacher" | "admin"
@@ -18,28 +25,73 @@ function Register({ onBack }) {
   const [classCode, setClassCode] = useState("");
   const [secretCode, setSecretCode] = useState("");
   const [message, setMessage] = useState("");
-   const [isError, setIsError] = useState(false)
+  const [isError, setIsError] = useState(false);
+
+  async function classCodeExists(code) {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("classCode", "==", code), limit(20));
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.some((item) => item.data()?.accountType === "teacher");
+  }
 
   async function register() {
     setMessage("");
 
-    // Validate shared fields 
+    if (!accountType) {
+      setIsError(true);
+      setMessage("Please select an account type.");
+      return;
+    }
+
     if (!email || !password || !firstName || !lastName) {
       setIsError(true);
       setMessage("Please fill out all fields.");
       return;
     }
 
-    // Student validation 
+    let normalizedClassCode = classCode.trim().toUpperCase();
+
     if (accountType === "student") {
-      if (!VALID_CLASS_CODES.includes(classCode.toUpperCase())) {
+      if (!normalizedClassCode) {
         setIsError(true);
-        setMessage("Invalid class code. Please check with your teacher.");
+        setMessage("Enter the class join code from your teacher.");
+        return;
+      }
+
+      try {
+        const validCode = await classCodeExists(normalizedClassCode);
+        if (!validCode) {
+          setIsError(true);
+          setMessage("Join code not found. Check with your teacher.");
+          return;
+        }
+      } catch (err) {
+        setIsError(true);
+        setMessage("Could not verify join code right now.");
         return;
       }
     }
 
-    // Teacher / Admin secret code validation
+    if (accountType === "teacher") {
+      if (!normalizedClassCode) {
+        normalizedClassCode = makeClassCode();
+      }
+
+      try {
+        const taken = await classCodeExists(normalizedClassCode);
+        if (taken) {
+          setIsError(true);
+          setMessage("That class code is already in use by another teacher.");
+          return;
+        }
+      } catch (err) {
+        setIsError(true);
+        setMessage("Could not validate class code right now.");
+        return;
+      }
+    }
+
     if (accountType === "teacher" || accountType === "admin") {
       try {
         const response = await fetch("http://localhost:3001/verify-code", {
@@ -49,7 +101,7 @@ function Register({ onBack }) {
         });
         const data = await response.json();
         if (!data.valid) {
-            setIsError(true);
+          setIsError(true);
           setMessage("Invalid registration code.");
           return;
         }
@@ -60,106 +112,116 @@ function Register({ onBack }) {
       }
     }
 
-    // Create Firebase Auth account
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCred.user.uid;
-      const token = await userCred.user.getIdToken();
-      // Save profile to Firestore
-
-      await fetch("http://localhost:3001/api/users/sync", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          accountType,
-          classCode:
-            accountType === "student" || accountType === "teacher"
-              ? classCode.toUpperCase()
-              : "",
-        }),
-      });
-
 
       await setDoc(doc(db, "users", uid), {
         firstName,
         lastName,
         email,
         accountType,
-        classCode: accountType === "student" ? classCode.toUpperCase() : 
-                   accountType === "teacher" ? classCode.toUpperCase() : "",
+        classCode:
+          accountType === "student" || accountType === "teacher"
+            ? normalizedClassCode
+            : "",
+        walletCents: accountType === "student" ? STARTING_CASH_CENTS : 0,
+        holdings: accountType === "student" ? [] : [],
+        tradeHistory: accountType === "student" ? [] : [],
         createdAt: new Date(),
       });
 
-        setIsError(false);
-      setMessage("Account created successfully!");
+      setIsError(false);
+      if (accountType === "teacher") {
+        setMessage(`Account created. Your class join code is ${normalizedClassCode}.`);
+      } else if (accountType === "student") {
+        setMessage("Account created successfully! Starting wallet: $10,000.");
+      } else {
+        setMessage("Account created successfully!");
+      }
     } catch (err) {
       setIsError(true);
       setMessage("Error: " + err.message);
     }
   }
 
-return (
-    
+  return (
     <>
       <h2>Register</h2>
 
-      {/* Account type selector */}
       {!accountType && (
-        
         <>
-          <p className="app-subtitle">Select your account type</p> 
-          <div className="account-type-grid"> 
-            <button className="btn-account-type" onClick={() => setAccountType("student")}>Student</button> 
-            <button className="btn-account-type" onClick={() => setAccountType("teacher")}>Teacher</button> 
-            <button className="btn-account-type" onClick={() => setAccountType("admin")}>Administrator</button> 
+          <p className="app-subtitle">Select your account type</p>
+          <div className="account-type-grid">
+            <button className="btn-account-type" onClick={() => setAccountType("student")}>
+              Student
+            </button>
+            <button className="btn-account-type" onClick={() => setAccountType("teacher")}>
+              Teacher
+            </button>
+            <button className="btn-account-type" onClick={() => setAccountType("admin")}>
+              Administrator
+            </button>
           </div>
         </>
       )}
 
-      {/* Shared fields */}
       {accountType && (
-        
         <>
-          <span className="account-badge">{accountType}</span> 
+          <span className="account-badge">{accountType}</span>
           <input placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
           <input placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
           <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
           <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
-          {/* Student only */}
           {accountType === "student" && (
-            <input placeholder="Class Code (e.g. UHS001)" value={classCode} onChange={(e) => setClassCode(e.target.value)} />
+            <input
+              placeholder="Class Join Code"
+              value={classCode}
+              onChange={(e) => setClassCode(e.target.value)}
+            />
           )}
 
-          {/* Teacher only */}
           {accountType === "teacher" && (
             <>
-              <input placeholder="Your Class Code (e.g. UHS001)" value={classCode} onChange={(e) => setClassCode(e.target.value)} />
-              <input placeholder="Teacher Registration Code" value={secretCode} onChange={(e) => setSecretCode(e.target.value)} />
+              <input
+                placeholder="Class Code (leave blank to auto-generate)"
+                value={classCode}
+                onChange={(e) => setClassCode(e.target.value)}
+              />
+              <input
+                placeholder="Teacher Registration Code"
+                value={secretCode}
+                onChange={(e) => setSecretCode(e.target.value)}
+              />
             </>
           )}
 
-          {/* Admin only */}
           {accountType === "admin" && (
-            <input placeholder="Administrator Registration Code" value={secretCode} onChange={(e) => setSecretCode(e.target.value)} />
+            <input
+              placeholder="Administrator Registration Code"
+              value={secretCode}
+              onChange={(e) => setSecretCode(e.target.value)}
+            />
           )}
 
-          <button className="btn-primary" onClick={register}>Create Account</button> 
-          <button className="btn-secondary" onClick={() => setAccountType("")}>Back to account type</button> 
+          <button className="btn-primary" onClick={register}>
+            Create Account
+          </button>
+          <button className="btn-secondary" onClick={() => setAccountType("")}>
+            Back to account type
+          </button>
         </>
       )}
 
-      <div className="divider" /> 
-      <button className="btn-secondary" onClick={onBack}>Back to Home</button> 
-      <p className={`message ${isError ? "error" : "success"}`}>{message}</p> 
-    </> 
+      <div className="divider" />
+      <button className="btn-secondary" onClick={onBack}>
+        Back to Home
+      </button>
+      <p className={`message ${isError ? "error" : "success"}`}>{message}</p>
+    </>
   );
 }
 
-
 export default Register;
+
