@@ -4,12 +4,17 @@ import Auth from "./Auth";
 import Register from "./Register";
 import Dashboard from "./Dashboard";
 import Landing from "./pages/landing";
+import Setting from "./pages/Settings";
+import Learn from "./pages/Learn";
+import Performance from "./pages/Performance";
+
 import "./App.css";
 
 function AppShell() {
   const { user, profile, loading, logout } = useAuth();
-  const [view, setView] = useState("landing"); // landing | login | register | dashboard
+  const [view, setView] = useState("landing");
   const [pendingLoginRedirect, setPendingLoginRedirect] = useState(false);
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
     if (loading) return;
@@ -39,7 +44,9 @@ function AppShell() {
       ? "landing-shell"
       : view === "dashboard"
         ? "card dashboard-shell"
-        : "card auth-card";
+        : view === "settings" || view === "learn" || view === "performance"
+          ? ""
+          : "card auth-card";
 
   function handleAuthenticated(nextProfile) {
     if (nextProfile?.accountType) {
@@ -50,32 +57,83 @@ function AppShell() {
 
   async function handleLoginClick() {
     setPendingLoginRedirect(true);
-
-    if (user) {
-      await logout();
-    }
-
+    if (user) await logout();
     setView("login");
   }
 
   return (
-    <div className={shellClassName}>
-      {view === "landing" && (
-        <Landing
-          onLoginClick={handleLoginClick}
-          onRegisterClick={() => setView("register")}
-        />
+  <>
+    {view === "settings" ? (
+      <Setting
+        onBack={() => setView("dashboard")}
+        theme={theme}
+        onThemeChange={setTheme}
+      />
+
+        ) : view === "learn" ? (
+        <div className={`${theme}`}>
+        <Learn />
+        </div>
+      ) : view === "performance" ? (
+        <div className={`${theme}`}>
+        <Performance />
+        </div>
+      ) : (
+
+      <div className={`${shellClassName} ${theme}`}>  {/* ← add theme here */}
+          {view === "landing" && (
+            <Landing
+              onLoginClick={handleLoginClick}
+              onRegisterClick={() => setView("register")}
+            />
+          )}
+          {view === "login" && (
+            <Auth
+              onBack={() => setView("landing")}
+              onAuthenticated={handleAuthenticated}
+            />
+          )}
+          {view === "register" && <Register onBack={() => setView("landing")} />}
+          {view === "dashboard" && (
+            <Dashboard onSettingsClick={() => setView("settings")} />
+          )}
+        </div>
       )}
 
-      {view === "login" && (
-        <Auth
-          onBack={() => setView("landing")}
-          onAuthenticated={handleAuthenticated}
-        />
+      {/* Bottom nav — only shows when logged in */}
+      {user && (
+        <nav className="bottom-nav">
+          <button
+            className={`bottom-nav-item ${view === "dashboard" ? "active" : ""}`}
+            onClick={() => setView("dashboard")}
+          >
+            <span className="bottom-nav-icon">🏠</span>
+            <span className="bottom-nav-label">Dashboard</span>
+          </button>
+          <button
+            className={`bottom-nav-item ${view === "learn" ? "active" : ""}`}
+            onClick={() => setView("learn")}
+          >
+            <span className="bottom-nav-icon">🏫</span>
+            <span className="bottom-nav-label">Class</span>
+          </button>
+          <button
+            className={`bottom-nav-item ${view === "performance" ? "active" : ""}`}
+            onClick={() => setView("performance")}
+          >
+            <span className="bottom-nav-icon">📈</span>
+            <span className="bottom-nav-label">Performance</span>
+          </button>
+          <button
+            className={`bottom-nav-item ${view === "settings" ? "active" : ""}`}
+            onClick={() => setView("settings")}
+          >
+            <span className="bottom-nav-icon">⚙️</span>
+            <span className="bottom-nav-label">Settings</span>
+          </button>
+        </nav>
       )}
-      {view === "register" && <Register onBack={() => setView("landing")} />}
-      {view === "dashboard" && <Dashboard />}
-    </div>
+    </>
   );
 }
 

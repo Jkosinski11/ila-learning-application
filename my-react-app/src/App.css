@@ -983,3 +983,92 @@ button:active {
     width: 100%;
   }
 }
+
+/* ── Bottom Nav ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 200;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #9ca3af;
+  font-family: inherit;
+}
+
+.bottom-nav-item:hover {
+  color: #1a7a7a;
+}
+
+.bottom-nav-item.active {
+  color: #1a7a7a;
+}
+
+.bottom-nav-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.bottom-nav-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* give dashboard content breathing room so bottom nav doesn't cover it */
+.dashboard-root {
+  padding-bottom: 72px;
+}
+
+.dashboard-shell.dark {
+  background: #0f172a;
+}
+
+.dark .panel {
+  background: #1e293b;
+  border-color: rgba(13, 148, 136, 0.2);
+  color: #e2e8f0;
+}
+
+.dark .dashboard-topbar {
+  background: #1e293b;
+  border-color: rgba(13, 148, 136, 0.2);
+}
+
+.dark .dashboard-title,
+.dark h2 {
+  color: #5eead4;
+}
+
+.dark .muted-copy {
+  color: #94a3b8;
+}
+
+.dark .metric-card {
+  background: #0f172a;
+  border-color: rgba(13, 148, 136, 0.2);
+}
+
+.dark .metric-value {
+  color: #e2e8f0;
+}

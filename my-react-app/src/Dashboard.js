@@ -854,7 +854,7 @@ function AdminDashboard() {
   );
 }
 
-export default function Dashboard() {
+export default function Dashboard({ onSettingsClick}) {
   const { user, profile, logout, refreshProfile } = useAuth();
 
   return (
@@ -887,6 +887,8 @@ export default function Dashboard() {
           <p className="muted-copy">Setting up your dashboard...</p>
         </section>
       )}
+
     </div>
   );
 }
+
