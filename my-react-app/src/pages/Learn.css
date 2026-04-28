@@ -1,0 +1,524 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Sora:wght@600;700&display=swap');
+
+/* ── Root ── */
+.learn-root {
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Nunito', sans-serif;
+  padding: 1.5rem 1.25rem 2rem;
+  max-width: 680px;
+  margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+.learn-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.learn-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.2rem;
+}
+
+.learn-sub {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
+}
+
+.learn-stats {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.stat-chip {
+  padding: 0.4rem 0.85rem;
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+  white-space: nowrap;
+}
+
+.xp-chip {
+  background: #fefce8;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+/* ── XP Bar ── */
+.xp-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.xp-bar-track {
+  flex: 1;
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0d9488, #14b8a6);
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.xp-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+/* ── Progress banner ── */
+.progress-banner {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #065f46;
+  margin-bottom: 1.25rem;
+  animation: slideDown 0.3s ease;
+}
+
+/* ── Topic Cards ── */
+.topics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.topic-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  animation: fadeUp 0.4s ease both;
+}
+
+.topic-card:hover:not(.locked) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+  border-color: var(--accent);
+}
+
+.topic-card.completed {
+  background: var(--bg);
+  border-color: var(--accent);
+}
+
+.topic-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.topic-card:nth-child(1) { animation-delay: 0.05s; }
+.topic-card:nth-child(2) { animation-delay: 0.10s; }
+.topic-card:nth-child(3) { animation-delay: 0.15s; }
+.topic-card:nth-child(4) { animation-delay: 0.20s; }
+.topic-card:nth-child(5) { animation-delay: 0.25s; }
+
+.topic-emoji {
+  font-size: 2rem;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--light);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.topic-info { flex: 1; min-width: 0; }
+
+.topic-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.3rem;
+}
+
+.topic-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.topic-xp {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--light);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.topic-lessons {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.topic-status {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+/* ── Learn Topbar ── */
+.learn-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.back-to-learn {
+  background: none;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.back-to-learn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.topbar-topic {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.topbar-xp {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #92400e;
+  background: #fefce8;
+  border: 1.5px solid #fde68a;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+}
+
+/* ── Lesson progress dots ── */
+.lesson-progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.dot.active {
+  background: var(--accent);
+  transform: scale(1.2);
+}
+
+/* ── Lesson Card ── */
+.lesson-card {
+  background: white;
+  border: 2px solid var(--light);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.35s ease;
+}
+
+.lesson-step {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 0.75rem;
+}
+
+.lesson-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+}
+
+.lesson-content {
+  font-size: 1rem;
+  color: #334155;
+  line-height: 1.75;
+  margin: 0 0 1.25rem;
+  font-weight: 500;
+}
+
+.lesson-fact {
+  background: var(--bg);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 0.9rem 1.1rem;
+  font-size: 0.9rem;
+  color: #334155;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* ── Lesson actions ── */
+.lesson-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.btn-back-lesson {
+  padding: 0.7rem 1.5rem;
+  background: none;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-back-lesson:hover { background: #f1f5f9; }
+
+.btn-next-lesson {
+  padding: 0.7rem 1.75rem;
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+.btn-next-lesson:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* ── Quiz ── */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.quiz-counter {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.quiz-score {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.quiz-card {
+  background: white;
+  border: 2px solid var(--light);
+  border-radius: 20px;
+  padding: 1.75rem;
+  margin-bottom: 1.25rem;
+  animation: fadeUp 0.35s ease;
+}
+
+.quiz-question {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 1.25rem;
+  line-height: 1.4;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+}
+
+.quiz-option:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+  transform: translateX(4px);
+}
+
+.quiz-option.selected {
+  background: var(--bg);
+  border-color: var(--accent);
+}
+
+.quiz-option.correct {
+  background: #ecfdf5;
+  border-color: #16a34a;
+  color: #14532d;
+}
+
+.quiz-option.wrong {
+  background: #fef2f2;
+  border-color: #dc2626;
+  color: #7f1d1d;
+}
+
+.option-letter {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.quiz-feedback {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  animation: slideDown 0.25s ease;
+}
+
+.correct-fb {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1.5px solid #a7f3d0;
+}
+
+.wrong-fb {
+  background: #fef2f2;
+  color: #7f1d1d;
+  border: 1.5px solid #fecaca;
+}
+
+/* ── Quiz Result ── */
+.quiz-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  animation: fadeUp 0.4s ease;
+}
+
+.result-emoji {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.result-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+}
+
+.result-score {
+  font-size: 1rem;
+  color: #64748b;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+.result-xp {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--accent);
+  background: var(--light);
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  margin-bottom: 1.75rem;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .learn-root { padding: 1rem 1rem 2rem; }
+  .learn-title { font-size: 1.3rem; }
+  .lesson-card, .quiz-card { padding: 1.25rem; }
+  .lesson-title, .quiz-question { font-size: 1.1rem; }
+  .result-title { font-size: 1.4rem; }
+}
