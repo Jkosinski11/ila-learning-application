@@ -335,17 +335,32 @@ async function waitForDb(retries = 30, delayMs = 1000) {
 }
 
 async function runMigrations() {
-  const dir = process.env.MIGRATIONS_DIR || path.join(__dirname);
-  const file = process.env.MIGRATION_FILE || "db_init.sql";
+  const dir =
+    process.env.MIGRATIONS_DIR ||
+    path.join(__dirname);
+
+  const file =
+    process.env.MIGRATION_FILE ||
+    "db_init.sql";
+
   const fullPath = path.join(dir, file);
 
   console.log("Running migration:", fullPath);
 
   if (!fs.existsSync(fullPath)) {
-    throw new Error("Migration file not found");
+    throw new Error(`Migration file not found: ${fullPath}`);
   }
 
-  console.log("Migration applied");
+  const sql = fs.readFileSync(fullPath, "utf8");
+
+  if (!sql.trim()) {
+    console.log("Migration file is empty.");
+    return;
+  }
+
+  await pool.query(sql);
+
+  console.log("Migration applied successfully");
 }
 
 async function start() {
