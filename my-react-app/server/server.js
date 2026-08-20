@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const admin = require("./firebaseAdmin");
@@ -6,18 +7,7 @@ const fs = require("fs");
 const path = require("path");
 
 
-require("dotenv").config();
 
-console.log("=== ENVIRONMENT CHECK ===");
-console.log({
-  PORT: !!process.env.PORT,
-  DATABASE_URL: !!process.env.DATABASE_URL,
-  FMP_API_KEY: !!process.env.FMP_API_KEY,
-  FIREBASE_PROJECT_ID: !!process.env.FIREBASE_PROJECT_ID,
-  FIREBASE_CLIENT_EMAIL: !!process.env.FIREBASE_CLIENT_EMAIL,
-  FIREBASE_PRIVATE_KEY: !!process.env.FIREBASE_PRIVATE_KEY
-});
-console.log("=========================");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -41,14 +31,6 @@ const pool = new Pool({
 /*
   Token verification middleware
 */
-async function verifyToken(req, res, next) {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
-  const idToken = authHeader.split("Bearer ")[1];
 
 function ensureFmpKey(res) {
   if (!FMP_API_KEY) {
@@ -162,10 +144,6 @@ async function verifyToken(req, res, next) {
   }
 }
 
-app.get("/", (req, res) => {
-  res.send(`Backend running (${API_VERSION})`);
-});
-
 app.get("/ping", (req, res) => res.send("pong"));
 
 app.get("/api/health", async (req, res) => {
@@ -196,28 +174,18 @@ app.get("/stocks/debug", async (req, res) => {
       error: error.message,
     });
   }
-},
+}),
 
 /*
   Public route
 */
 app.get("/", (req, res) => {
   res.send("Backend running");
-}));
+});
 
 /*
   Protected route
 */
-app.get("/protected", verifyToken, (req, res) => {
-  res.json({
-    message: "You are authenticated",
-    user: {
-      uid: req.user.uid,
-      email: req.user.email,
-    },
-  });
-});
-
 app.get("/protected", verifyToken, (req, res) => {
   res.json({
     message: "You are authenticated",
@@ -367,14 +335,14 @@ async function waitForDb(retries = 30, delayMs = 1000) {
 }
 
 async function runMigrations() {
-  const dir = process.env.MIGRATIONS_DIR || path.join(__dirname, "..", "backend");
+  const dir = process.env.MIGRATIONS_DIR || path.join(__dirname);
   const file = process.env.MIGRATION_FILE || "db_init.sql";
   const fullPath = path.join(dir, file);
 
   console.log("Running migration:", fullPath);
 
-  if (!REGISTRATION_CODES[accountType]) {
-    return res.status(400).json({ valid: false, error: "Invalid account type" });
+  if (!fs.existsSync(fullPath)) {
+    throw new Error("Migration file not found");
   }
 
   console.log("Migration applied");
@@ -394,4 +362,4 @@ async function start() {
 start().catch((error) => {
   console.error("Server startup failed:", error);
   process.exit(1);
-})};
+});
