@@ -5,10 +5,10 @@ const { Pool } = require("pg");
 const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
-const admin = require("./firebaseAdmin");
+
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 const API_VERSION = "stocks-v3";
 const firebaseReady = Array.isArray(admin.apps) && admin.apps.length > 0;
 
@@ -184,14 +184,14 @@ app.get("/stocks/debug", async (req, res) => {
       error: error.message,
     });
   }
-}
+},
 
 /*
   Public route
 */
 app.get("/", (req, res) => {
   res.send("Backend running");
-});
+}));
 
 /*
   Protected route
@@ -382,4 +382,4 @@ async function start() {
 start().catch((error) => {
   console.error("Server startup failed:", error);
   process.exit(1);
-});
+})};
