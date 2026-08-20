@@ -22,7 +22,7 @@ export default function Landing({ onLoginClick, onRegisterClick }) {
     return () => observer.disconnect();
   }, []);
 
-  const StatCounter = ({ end, label, suffix = '' }) => {
+  const StatCounter = ({ end, label, suffix = '', animateStats }) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
@@ -235,10 +235,10 @@ export default function Landing({ onLoginClick, onRegisterClick }) {
         <div className="stats-content">
           <h2>The Impact So Far</h2>
           <div className="stats-grid">
-            <StatCounter end={500} label="Students Trading" />
-            <StatCounter end={50} label="Classrooms Active" />
-            <StatCounter end={100000} label="Trades Executed" suffix="+" />
-            <StatCounter end={2} label="Million in Simulated Value" suffix="M+" />
+            <StatCounter end={500} label="Students Trading" animateStats={animateStats} />
+            <StatCounter end={50} label="Classrooms Active" animateStats={animateStats}/>
+            <StatCounter end={100000} label="Trades Executed" suffix="+" animateStats={animateStats} />
+            <StatCounter end={2} label="Million in Simulated Value" suffix="M+" animateStats={animateStats} />
           </div>
         </div>
       </section>
