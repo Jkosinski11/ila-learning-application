@@ -4,8 +4,20 @@ const admin = require("./firebaseAdmin");
 const { Pool } = require("pg");
 const fs = require("fs");
 const path = require("path");
-//require("dotenv").config();
 
+
+require("dotenv").config();
+
+console.log("=== ENVIRONMENT CHECK ===");
+console.log({
+  PORT: !!process.env.PORT,
+  DATABASE_URL: !!process.env.DATABASE_URL,
+  FMP_API_KEY: !!process.env.FMP_API_KEY,
+  FIREBASE_PROJECT_ID: !!process.env.FIREBASE_PROJECT_ID,
+  FIREBASE_CLIENT_EMAIL: !!process.env.FIREBASE_CLIENT_EMAIL,
+  FIREBASE_PRIVATE_KEY: !!process.env.FIREBASE_PRIVATE_KEY
+});
+console.log("=========================");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
