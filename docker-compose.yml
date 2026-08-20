@@ -2,9 +2,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: ila
-      POSTGRES_PASSWORD: ila1234!
-      POSTGRES_DB: ila_db
+      POSTGRES_USER: ${DB_USER:?DB_USER is required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB: ${DB_NAME:?DB_NAME is required}
     ports:
       - "5432:5432"
     volumes:
@@ -15,23 +15,23 @@ services:
     volumes:
       - ./my-react-app/backend:/backend:ro
     environment:
-      PORT: 3001
-      # IMPORTANT: host is the service name "db", not localhost
-      DATABASE_URL: postgresql://ila:ila1234!@db:5432/ila_db
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${SERVER_PORT:-3001}
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:?FIREBASE_PROJECT_ID is required}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL:?FIREBASE_CLIENT_EMAIL is required}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY:?FIREBASE_PRIVATE_KEY is required}
       MIGRATIONS_DIR: /backend
       MIGRATION_FILE: db_init.sql
     ports:
-      - "3001:3001"
+      - "${SERVER_PORT:-3001}:3001"
     depends_on:
       - db
 
   client:
     build: ./my-react-app
-    environment:
-      # CRA file watching in Docker on Linux/WSL can be flaky without this
-      CHOKIDAR_USEPOLLING: "true"
     ports:
-      - "3000:3000"
+      - "${CLIENT_PORT:-3000}:3000"
     depends_on:
       - server
 
