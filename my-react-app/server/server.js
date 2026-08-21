@@ -21,7 +21,12 @@ const SEARCH_TTL_MS = 45 * 1000;
 const quoteCache = new Map();
 const searchCache = new Map();
 
-app.use(cors());
+const allowedOrigin = process.env.FRONTEND_ORIGIN;
+
+app.use(cors({
+  origin: allowedOrigin,
+  credentials: true,
+}));
 app.use(express.json());
 
 const pool = new Pool({
