@@ -10,14 +10,7 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
-const missingConfig = Object.entries(firebaseConfig)
-  .filter(([, value]) => !value)
-  .map(([key]) => key);
-
-if (missingConfig.length > 0) {
-  throw new Error(`Missing Firebase frontend configuration: ${missingConfig.join(", ")}`);
-}
-
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 export default app;
